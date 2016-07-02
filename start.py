@@ -11,4 +11,30 @@
 
 '''
 import cherrypy
-import sqlite3
+from modelClass import ModelClass
+
+class Starter(object):
+
+    @cherrypy.expose
+    def createMedic(self, name, password, genre, addr, spe):
+        model = ModelClass()
+        model.createMedic(name, password, genre, addr, spe)
+        return "Creating user oK : "+str(model.listMedic())
+
+    @cherrypy.expose
+    def listMedic(self):
+        model = ModelClass()
+        return str(model.listMedic())
+
+    @cherrypy.expose
+    def auth(self, name, password):
+        model = ModelClass()
+        return str(model.authMedic(name, password))
+
+    @cherrypy.expose
+    def index(self):
+        return "Teleconsult-Server v0.1"
+    index.exposed = True
+
+
+cherrypy.quickstart(Starter())
