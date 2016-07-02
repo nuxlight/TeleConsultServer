@@ -27,9 +27,26 @@ class Starter(object):
         return str(model.listMedic())
 
     @cherrypy.expose
+    def listFolder(self, medic):
+        model = ModelClass()
+        return str(model.listDossier(medic))
+
+    @cherrypy.expose
+    def createFolder(self, patient, medecin, sexe, pat, avisM, avisRef, etat):
+        model = ModelClass()
+        model.createDossier(patient, medecin, sexe, pat, avisM, avisRef, etat)
+        return "folder created"
+
+    @cherrypy.expose
     def auth(self, name, password):
         model = ModelClass()
         return str(model.authMedic(name, password))
+
+    @cherrypy.expose
+    def debug(self):
+        model = ModelClass()
+        data = "('loule', 'loule', 'F', 'sdfsdf', 'dsf')"
+        return str(model.encodingJsonResult(table="medics_account", data=data))
 
     @cherrypy.expose
     def index(self):
