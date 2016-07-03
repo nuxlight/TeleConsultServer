@@ -45,6 +45,7 @@ class ModelClass():
                 patient VARCHAR(25),
                 medecin VARCHAR(25),
                 sexe VARCHAR(1),
+                age VARCHAR(3),
                 pathologie VARCHAR(25),
                 avis_medecin VARCHAR(200),
                 avis_ref VARCHAR(200),
@@ -66,13 +67,19 @@ class ModelClass():
         else:
             return 'false'
 
+    def getMedic(self, name):
+        query = "SELECT * FROM medics_account WHERE name LIKE '" + name + "'"
+        result = self.cursor.execute(query)
+        return self.encodingJsonResult('medics_account', result.fetchall())
+
+
     def listDossier(self, medic):
         query = "SELECT * FROM patients_folder WHERE medecin LIKE '"+medic+"'"
         result = self.cursor.execute(query)
         return self.encodingJsonResult('patients_folder',result.fetchall())
 
-    def createDossier(self, patient, medecin, sexe, pathologie, avis_medecin, avis_ref, etat_dossier):
-        query = "INSERT INTO patients_folder VALUES ('" + patient + "','" + medecin + "','" + sexe + "','" + pathologie + "','" + avis_medecin + "','" + avis_ref + "','" + etat_dossier + "')"
+    def createDossier(self, patient, medecin, sexe, age, pathologie, avis_medecin, avis_ref, etat_dossier):
+        query = "INSERT INTO patients_folder VALUES ('" + patient + "','" + medecin + "','" + sexe + "','" + age + "','"+ pathologie + "','" + avis_medecin + "','" + avis_ref + "','" + etat_dossier + "')"
         self.con.execute(query)
         self.con.commit()
 

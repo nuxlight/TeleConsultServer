@@ -27,14 +27,19 @@ class Starter(object):
         return str(model.listMedic())
 
     @cherrypy.expose
+    def getMedicInfo(self, name):
+        model = ModelClass()
+        return str(model.getMedic(name))
+
+    @cherrypy.expose
     def listFolder(self, medic):
         model = ModelClass()
         return str(model.listDossier(medic))
 
     @cherrypy.expose
-    def createFolder(self, patient, medecin, sexe, pat, avisM, avisRef, etat):
+    def createFolder(self, patient, medecin, sexe, age, pat, avisM, avisRef, etat):
         model = ModelClass()
-        model.createDossier(patient, medecin, sexe, pat, avisM, avisRef, etat)
+        model.createDossier(patient, medecin, sexe, age, pat, avisM, avisRef, etat)
         return "folder created"
 
     @cherrypy.expose
