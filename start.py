@@ -53,6 +53,18 @@ class Starter(object):
         data = "('loule', 'loule', 'F', 'sdfsdf', 'dsf')"
         return str(model.encodingJsonResult(table="medics_account", data=data))
 
+    '''Adding uploading function'''
+    @cherrypy.expose
+    def uploadImage(self, putFile, fileId):
+        out = open(fileId, 'wb')
+        size = 0
+        while True:
+            data = putFile.file.read(8192)
+            if not data:
+                break
+            size += len(data)
+            out.write(data)
+
     @cherrypy.expose
     def index(self):
         return "Teleconsult-Server v0.1"
