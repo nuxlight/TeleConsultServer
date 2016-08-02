@@ -1,0 +1,366 @@
+-- phpMyAdmin SQL Dump
+-- version 4.4.10
+-- http://www.phpmyadmin.net
+--
+-- Client :  localhost:3306
+-- Généré le :  Dim 31 Juillet 2016 à 14:20
+-- Version du serveur :  5.5.42
+-- Version de PHP :  7.0.0
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Base de données :  `teleconsult`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `AVIS`
+--
+
+CREATE TABLE `AVIS` (
+  `CONSULTATION_ID` int(10) NOT NULL,
+  `MEDECIN_ID` int(10) NOT NULL,
+  `AVIS` varchar(500) NOT NULL,
+  `FLAG_FINAL` int(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `CENTRE_HOSPITALIER`
+--
+
+CREATE TABLE `CENTRE_HOSPITALIER` (
+  `CENTRE_HOSPITALIER_ID` int(10) NOT NULL,
+  `CENTRE_HOSPITALIER_NOM` varchar(20) NOT NULL,
+  `CENTRE_HOSPITALIER_ADRESSE` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `CENTRE_HOSPITALIER`
+--
+
+INSERT INTO `CENTRE_HOSPITALIER` (`CENTRE_HOSPITALIER_ID`, `CENTRE_HOSPITALIER_NOM`, `CENTRE_HOSPITALIER_ADRESSE`) VALUES
+(1, 'Purpan', 'Place du Dr Joseph Baylac, 31300 Toulouse');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `CENTRE_HOSPITALIER_MEDECIN`
+--
+
+CREATE TABLE `CENTRE_HOSPITALIER_MEDECIN` (
+  `CENTRE_HOSPITALIER_ID` int(10) NOT NULL,
+  `MEDECIN_ID` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `CENTRE_HOSPITALIER_REFERENT`
+--
+
+CREATE TABLE `CENTRE_HOSPITALIER_REFERENT` (
+  `CENTRE_HOSPITALIER_ID` int(10) NOT NULL,
+  `MEDECIN_ID` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `CONSULTATION`
+--
+
+CREATE TABLE `CONSULTATION` (
+  `CONSULTATION_ID` int(10) NOT NULL,
+  `SSN_ID` varchar(15) NOT NULL,
+  `TRAITEMENT` varchar(500) NOT NULL,
+  `HISTORIQUE` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `DMP`
+--
+
+CREATE TABLE `DMP` (
+  `DMP_ID` int(10) NOT NULL,
+  `SSN_ID` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `EXAMEN`
+--
+
+CREATE TABLE `EXAMEN` (
+  `EXAMEN_ID` int(10) NOT NULL,
+  `MEDECIN_ID` int(10) NOT NULL,
+  `EXAMEN_NOM` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `MEDECIN`
+--
+
+CREATE TABLE `MEDECIN` (
+  `MEDECIN_ID` int(10) NOT NULL,
+  `MEDECIN_NOM` varchar(20) NOT NULL,
+  `MEDECIN_PRENOM` varchar(20) NOT NULL,
+  `MEDECIN_GENRE` varchar(1) NOT NULL,
+  `SPECIALITE_ID` int(10) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `MEDECIN`
+--
+
+INSERT INTO `MEDECIN` (`MEDECIN_ID`, `MEDECIN_NOM`, `MEDECIN_PRENOM`, `MEDECIN_GENRE`, `SPECIALITE_ID`) VALUES
+(1, 'Dupuis', 'Julie', 'F', 1),
+(2, 'Bouchard', 'Bernard', 'M', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `PATIENT`
+--
+
+CREATE TABLE `PATIENT` (
+  `SSN_ID` varchar(15) NOT NULL,
+  `MEDECIN_ID` int(10) NOT NULL,
+  `PATIENT_NOM` varchar(20) NOT NULL,
+  `PATIENT_PRENOM` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `PATIENT`
+--
+
+INSERT INTO `PATIENT` (`SSN_ID`, `MEDECIN_ID`, `PATIENT_NOM`, `PATIENT_PRENOM`) VALUES
+('1', 1, 'Dupont', 'Paul'),
+('2', 2, 'France', 'Ariel');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `RESULTAT`
+--
+
+CREATE TABLE `RESULTAT` (
+  `CONSULTATION_ID` int(10) NOT NULL,
+  `EXAMEN_ID` int(10) NOT NULL,
+  `IMAGE_NOM` varchar(100) NOT NULL,
+  `IMAGE_PATH` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `SPECIALITE`
+--
+
+CREATE TABLE `SPECIALITE` (
+  `SPECIALITE_ID` int(10) NOT NULL,
+  `SPECIALITE_NOM` varchar(20) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `SPECIALITE`
+--
+
+INSERT INTO `SPECIALITE` (`SPECIALITE_ID`, `SPECIALITE_NOM`) VALUES
+(1, 'Dermatologue'),
+(2, 'Cardiologue');
+
+--
+-- Index pour les tables exportées
+--
+
+--
+-- Index pour la table `AVIS`
+--
+ALTER TABLE `AVIS`
+  ADD PRIMARY KEY (`CONSULTATION_ID`,`MEDECIN_ID`) USING BTREE,
+  ADD KEY `IDX_AVIS_ID` (`CONSULTATION_ID`,`MEDECIN_ID`),
+  ADD KEY `MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `CENTRE_HOSPITALIER`
+--
+ALTER TABLE `CENTRE_HOSPITALIER`
+  ADD PRIMARY KEY (`CENTRE_HOSPITALIER_ID`) USING BTREE,
+  ADD KEY `IDX_CENTRE_HOSPITALIER_ID` (`CENTRE_HOSPITALIER_ID`);
+
+--
+-- Index pour la table `CENTRE_HOSPITALIER_MEDECIN`
+--
+ALTER TABLE `CENTRE_HOSPITALIER_MEDECIN`
+  ADD PRIMARY KEY (`CENTRE_HOSPITALIER_ID`,`MEDECIN_ID`) USING BTREE,
+  ADD KEY `IDX_CENTRE_HOSPITALIER_REFERENT` (`CENTRE_HOSPITALIER_ID`,`MEDECIN_ID`),
+  ADD KEY `MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `CENTRE_HOSPITALIER_REFERENT`
+--
+ALTER TABLE `CENTRE_HOSPITALIER_REFERENT`
+  ADD PRIMARY KEY (`CENTRE_HOSPITALIER_ID`,`MEDECIN_ID`) USING BTREE,
+  ADD KEY `IDX_CENTRE_HOSPITALIER_REFERENT` (`CENTRE_HOSPITALIER_ID`,`MEDECIN_ID`),
+  ADD KEY `MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `CONSULTATION`
+--
+ALTER TABLE `CONSULTATION`
+  ADD PRIMARY KEY (`CONSULTATION_ID`) USING BTREE,
+  ADD KEY `IDX_CONSULTATION_ID` (`CONSULTATION_ID`),
+  ADD KEY `SSN_ID` (`SSN_ID`);
+
+--
+-- Index pour la table `DMP`
+--
+ALTER TABLE `DMP`
+  ADD PRIMARY KEY (`DMP_ID`) USING BTREE,
+  ADD KEY `IDX_DMP_ID` (`DMP_ID`),
+  ADD KEY `SSN_ID` (`SSN_ID`);
+
+--
+-- Index pour la table `EXAMEN`
+--
+ALTER TABLE `EXAMEN`
+  ADD PRIMARY KEY (`EXAMEN_ID`) USING BTREE,
+  ADD KEY `IDX_EXAMEN_ID` (`EXAMEN_ID`),
+  ADD KEY `MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `MEDECIN`
+--
+ALTER TABLE `MEDECIN`
+  ADD PRIMARY KEY (`MEDECIN_ID`) USING BTREE,
+  ADD KEY `SPECIALITE_ID` (`SPECIALITE_ID`),
+  ADD KEY `IDX_MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `PATIENT`
+--
+ALTER TABLE `PATIENT`
+  ADD PRIMARY KEY (`SSN_ID`) USING BTREE,
+  ADD KEY `IDX_SSN_ID` (`SSN_ID`),
+  ADD KEY `MEDECIN_ID` (`MEDECIN_ID`);
+
+--
+-- Index pour la table `RESULTAT`
+--
+ALTER TABLE `RESULTAT`
+  ADD PRIMARY KEY (`CONSULTATION_ID`,`EXAMEN_ID`) USING BTREE,
+  ADD KEY `IDX_RESULTAT_ID` (`CONSULTATION_ID`,`EXAMEN_ID`),
+  ADD KEY `EXAMEN_ID` (`EXAMEN_ID`);
+
+--
+-- Index pour la table `SPECIALITE`
+--
+ALTER TABLE `SPECIALITE`
+  ADD PRIMARY KEY (`SPECIALITE_ID`) USING BTREE,
+  ADD KEY `IDX_SPECIALITE_ID` (`SPECIALITE_ID`);
+
+--
+-- AUTO_INCREMENT pour les tables exportées
+--
+
+--
+-- AUTO_INCREMENT pour la table `CENTRE_HOSPITALIER`
+--
+ALTER TABLE `CENTRE_HOSPITALIER`
+  MODIFY `CENTRE_HOSPITALIER_ID` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT pour la table `CONSULTATION`
+--
+ALTER TABLE `CONSULTATION`
+  MODIFY `CONSULTATION_ID` int(10) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `DMP`
+--
+ALTER TABLE `DMP`
+  MODIFY `DMP_ID` int(10) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `EXAMEN`
+--
+ALTER TABLE `EXAMEN`
+  MODIFY `EXAMEN_ID` int(10) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `MEDECIN`
+--
+ALTER TABLE `MEDECIN`
+  MODIFY `MEDECIN_ID` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT pour la table `SPECIALITE`
+--
+ALTER TABLE `SPECIALITE`
+  MODIFY `SPECIALITE_ID` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `AVIS`
+--
+ALTER TABLE `AVIS`
+  ADD CONSTRAINT `avis_ibfk_1` FOREIGN KEY (`CONSULTATION_ID`) REFERENCES `CONSULTATION` (`CONSULTATION_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `avis_ibfk_2` FOREIGN KEY (`MEDECIN_ID`) REFERENCES `MEDECIN` (`MEDECIN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `CENTRE_HOSPITALIER_MEDECIN`
+--
+ALTER TABLE `CENTRE_HOSPITALIER_MEDECIN`
+  ADD CONSTRAINT `centre_hospitalier_medecin_ibfk_1` FOREIGN KEY (`CENTRE_HOSPITALIER_ID`) REFERENCES `CENTRE_HOSPITALIER` (`CENTRE_HOSPITALIER_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `centre_hospitalier_medecin_ibfk_2` FOREIGN KEY (`MEDECIN_ID`) REFERENCES `MEDECIN` (`MEDECIN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `CENTRE_HOSPITALIER_REFERENT`
+--
+ALTER TABLE `CENTRE_HOSPITALIER_REFERENT`
+  ADD CONSTRAINT `centre_hospitalier_referent_ibfk_1` FOREIGN KEY (`CENTRE_HOSPITALIER_ID`) REFERENCES `CENTRE_HOSPITALIER` (`CENTRE_HOSPITALIER_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `centre_hospitalier_referent_ibfk_2` FOREIGN KEY (`MEDECIN_ID`) REFERENCES `MEDECIN` (`MEDECIN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `CONSULTATION`
+--
+ALTER TABLE `CONSULTATION`
+  ADD CONSTRAINT `consultation_ibfk_1` FOREIGN KEY (`SSN_ID`) REFERENCES `PATIENT` (`SSN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `DMP`
+--
+ALTER TABLE `DMP`
+  ADD CONSTRAINT `dmp_ibfk_1` FOREIGN KEY (`SSN_ID`) REFERENCES `PATIENT` (`SSN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `EXAMEN`
+--
+ALTER TABLE `EXAMEN`
+  ADD CONSTRAINT `examen_ibfk_1` FOREIGN KEY (`MEDECIN_ID`) REFERENCES `MEDECIN` (`MEDECIN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `MEDECIN`
+--
+ALTER TABLE `MEDECIN`
+  ADD CONSTRAINT `medecin_ibfk_1` FOREIGN KEY (`SPECIALITE_ID`) REFERENCES `SPECIALITE` (`SPECIALITE_ID`);
+
+--
+-- Contraintes pour la table `PATIENT`
+--
+ALTER TABLE `PATIENT`
+  ADD CONSTRAINT `patient_ibfk_1` FOREIGN KEY (`MEDECIN_ID`) REFERENCES `MEDECIN` (`MEDECIN_ID`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `RESULTAT`
+--
+ALTER TABLE `RESULTAT`
+  ADD CONSTRAINT `resultat_ibfk_1` FOREIGN KEY (`CONSULTATION_ID`) REFERENCES `CONSULTATION` (`CONSULTATION_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `resultat_ibfk_2` FOREIGN KEY (`EXAMEN_ID`) REFERENCES `EXAMEN` (`EXAMEN_ID`) ON DELETE CASCADE;

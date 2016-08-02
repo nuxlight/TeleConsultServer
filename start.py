@@ -15,11 +15,25 @@ from modelClass import ModelClass
 
 class Starter(object):
 
-    @cherrypy.expose
-    def createMedic(self, name, password, genre, addr, spe):
+    def __init__(self):
         model = ModelClass()
-        model.createMedic(name, password, genre, addr, spe)
-        return "Creating user oK : "+str(model.listMedic())
+
+
+    '''
+    Medical part
+    ============
+    Create medic and list all medics
+    '''
+    @cherrypy.expose
+    def createMedic(self, name, lastname, password, genre, addr, spe):
+        model = ModelClass()
+        model.createMedic(name, lastname, password, genre, addr, spe)
+        return "Creating user oK : "
+
+    @cherrypy.expose
+    def auth(self, name, password):
+        model = ModelClass()
+        return str(model.authMedic(name, password))
 
     @cherrypy.expose
     def listMedic(self):
@@ -29,23 +43,18 @@ class Starter(object):
     @cherrypy.expose
     def getMedicInfo(self, name):
         model = ModelClass()
-        return str(model.getMedic(name))
+        return str("["+model.getMedic(name)+"]")
 
     @cherrypy.expose
-    def listFolder(self, medic):
+    def getFolders(self, medicID):
         model = ModelClass()
-        return str(model.listDossier(medic))
+        return str(model.getFolders(medic_id=medicID))
 
     @cherrypy.expose
     def createFolder(self, patient, medecin, sexe, age, pat, avisM, avisRef, etat):
         model = ModelClass()
         model.createDossier(patient, medecin, sexe, age, pat, avisM, avisRef, etat)
         return "folder created"
-
-    @cherrypy.expose
-    def auth(self, name, password):
-        model = ModelClass()
-        return str(model.authMedic(name, password))
 
     @cherrypy.expose
     def debug(self):
@@ -70,5 +79,6 @@ class Starter(object):
         return "Teleconsult-Server v0.1"
     index.exposed = True
 
-
+cherrypy.config.update(
+    {'server.socket_host': '0.0.0.0'} )
 cherrypy.quickstart(Starter())

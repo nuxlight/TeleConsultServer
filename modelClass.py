@@ -1,77 +1,71 @@
 '''
 modelClass - Fait le lien avec la BDD
 
-@Thibaud : J'ai fait que deux table pour l'instant
-
-CREATE TABLE IF NOT EXISTS medics_account(
-    name VARCAHR(25),
-    genre VARCHAR(1),
-    adresse VARCHAR(50),
-    specialite VARCHAR(25)
-);
-
-CREATE TABLE IF NOT EXISTS patients_folder (
-    patient VARCHAR(25),
-    sexe VARCHAR(1),
-    pathologie VARCHAR(25),
-    avis_medecin VARCHAR(200),
-    avis_ref VARCHAR(200),
-    etat_dossier INT(3)
-);
-
 Etat_dossier : 1 (envoyé) 2 (en cours) 3 (fini)
 
 '''
-import sqlite3
 import collections
 import json
-
-from docutils.parsers import null
+from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker
+from orm import *
 
 
 class ModelClass():
     def __init__(self):
-        print("Start database")
-        self.con = sqlite3.connect('teleconsult.db')
-        self.cursor = self.con.cursor()
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS medics_account(
-                name VARCHAR(25),
-                password VARCHAR(25),
-                genre VARCHAR(1),
-                adresse VARCHAR(50),
-                specialite VARCHAR(25)
-            );''')
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS patients_folder (
-                patient VARCHAR(25),
-                medecin VARCHAR(25),
-                sexe VARCHAR(1),
-                age VARCHAR(3),
-                pathologie VARCHAR(25),
-                avis_medecin VARCHAR(200),
-                avis_ref VARCHAR(200),
-                etat_dossier INT(3)
-            );''')
+        engine = create_engine("mysql+pymysql://root:root@localhost/teleconsult?host=localhost?port=3306")
+        self.con = engine.connect()
+        Base.metadata.create_all(engine)
+        Base.metadata.bind = engine
+        DBSession = sessionmaker(bind=engine)
+        self.session = DBSession()
+        print("SQLAlchemy is connected and ready to right")
 
-    def createMedic(self, name, password, genre, addresse, spe):
-        query = "INSERT INTO medics_account VALUES ('"+name+"','"+password+"','"+genre+"','"+addresse+"','"+spe+"')"
-        self.con.execute(query)
-        self.con.commit()
+    def createMedic(self, name, lastname, password, genre, addr, spe):
+        new_medic = MEDECIN(MEDECIN_NOM=name,MEDECIN_PRENOM=lastname,MEDECIN_PASSWORD=password,MEDECIN_GENRE=genre,MEDECIN_ADDR=addr,SPECIALITE_ID=spe)
+        self.session.add(new_medic)
+        self.session.commit()
 
     def authMedic(self, name, password):
-        query = "SELECT * FROM medics_account WHERE name LIKE '"+name+"' AND password LIKE '"+password+"'"
-        result = self.cursor.execute(query)
-        row = result.fetchone()
-        print(str(row))
-        if str(row) != "None":
-            return 'true'
-        else:
-            return 'false'
+        result = {}
+        for user in self.session.query(MEDECIN).filter_by(MEDECIN_NOM=name,MEDECIN_PASSWORD=password):
+            if user.MEDECIN_PASSWORD == password:
+                result['auth'] = 'true'
+                result['medicID'] = user.MEDECIN_ID
+                return json.dumps(result)
+            else:
+                result['auth'] = 'false'
+                result['medicID'] = null
+                return json.dumps(result)
 
     def getMedic(self, name):
-        query = "SELECT * FROM medics_account WHERE name LIKE '" + name + "'"
-        result = self.cursor.execute(query)
-        return self.encodingJsonResult('medics_account', result.fetchall())
+        data = {}
+        for user in self.session.query(MEDECIN).filter_by(MEDECIN_NOM=name):
+            data['name'] = user.MEDECIN_NOM
+            data['genre'] = user.MEDECIN_GENRE
+            data['adresse'] = user.MEDECIN_ADDR
+            for speciality in self.session.query(SPECIALITE).filter_by(SPECIALITE_ID=user.SPECIALITE_ID):
+                data['specialite'] = speciality.SPECIALITE_NOM
+        return json.dumps(data)
 
+    def getFolders(self, medic_id):
+        folderList = []
+        for folder in self.session.query(DOSSIER).filter_by(MEDECIN_ID=medic_id):
+            tempFolder = {}
+            tempFolder['folder_id'] = folder.CONSULTATION_ID
+            tempFolder['folder_status'] = folder.DOSSIER_STATUS
+            for consult in self.session.query(CONSULTATION).filter_by(CONSULTATION_ID=folder.CONSULTATION_ID):
+                tempFolder['consult_id'] = consult.CONSULTATION_ID
+                tempFolder['traitement'] = consult.TRAITEMENT
+            for patient in self.session.query(PATIENT).filter_by(SSN_ID=folder.SSN_ID):
+                tempFolder['patient_name'] = patient.PATIENT_NOM
+                tempFolder['patient_lastname'] = patient.PATIENT_PRENOM
+                tempFolder['patient_age'] = patient.PATIENT_AGE
+                tempFolder['patient_genre'] = patient.PATIENT_GENRE
+            for exam in self.session.query(EXAMEN).filter_by(EXAMEN_ID=folder.EXAMEN_ID):
+                tempFolder['examen_name'] = exam.EXAMEN_NOM
+            folderList.append(tempFolder)
+        return json.dumps(folderList)
 
     def listDossier(self, medic):
         query = "SELECT * FROM patients_folder WHERE medecin LIKE '"+medic+"'"
@@ -82,23 +76,3 @@ class ModelClass():
         query = "INSERT INTO patients_folder VALUES ('" + patient + "','" + medecin + "','" + sexe + "','" + age + "','"+ pathologie + "','" + avis_medecin + "','" + avis_ref + "','" + etat_dossier + "')"
         self.con.execute(query)
         self.con.commit()
-
-    def listMedic(self):
-        result = self.cursor.execute("SELECT * FROM medics_account")
-        return self.encodingJsonResult('medics_account', result.fetchall())
-
-    def encodingJsonResult(self, table, data):
-        query = "PRAGMA table_info("+table+");"
-        result = self.cursor.execute(query)
-        result = result.fetchall()
-        finalArray = []
-        for entry in data:
-            print(entry)
-            index = 0
-            d = collections.OrderedDict()
-            for row in result:
-                print(entry[index])
-                d[row[1]] = entry[index]
-                index = index+1
-            finalArray.append(d)
-        return json.dumps(finalArray)
