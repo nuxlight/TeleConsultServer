@@ -36,11 +36,6 @@ class Starter(object):
         return str(model.authMedic(name, password))
 
     @cherrypy.expose
-    def listMedic(self):
-        model = ModelClass()
-        return str(model.listMedic())
-
-    @cherrypy.expose
     def getMedicInfo(self, name):
         model = ModelClass()
         return str("["+model.getMedic(name)+"]")
@@ -51,10 +46,14 @@ class Starter(object):
         return str(model.getFolders(medic_id=medicID))
 
     @cherrypy.expose
-    def createFolder(self, patient, medecin, sexe, age, pat, avisM, avisRef, etat):
+    def getExams(self, medicID):
         model = ModelClass()
-        model.createDossier(patient, medecin, sexe, age, pat, avisM, avisRef, etat)
-        return "folder created"
+        return str(model.getExamens(medic_id=medicID))
+
+    @cherrypy.expose
+    def getPatients(self, medicID):
+        model = ModelClass()
+        return str(model.getPatients(medic_id=medicID))
 
     @cherrypy.expose
     def debug(self):
