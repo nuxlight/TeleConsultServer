@@ -123,6 +123,11 @@ class ModelClass():
         self.session.add(new_medic)
         self.session.commit()
 
+    def createPatient(self, ssn_id, medic_id, name, last_name, age, gender):
+        new_patient = PATIENT(SSN_ID=ssn_id,MEDECIN_ID=medic_id,PATIENT_NOM=name,PATIENT_PRENOM=last_name,PATIENT_AGE=age,PATIENT_GENRE=gender)
+        self.session.add(new_patient)
+        self.session.commit()
+
     def createExamen(self, medic_id, examen_name):
         new_examen = EXAMEN(MEDECIN_ID=medic_id,EXAMEN_NOM=examen_name)
         self.session.add(new_examen)
@@ -133,3 +138,7 @@ class ModelClass():
         self.session.add(new_consult)
         self.session.commit()
 
+    def createFolder(self, status, consult_id, medic_id, patient_id, examen_id, image_name, image_path):
+        new_folder = DOSSIER(DOSSIER_STATUS=status, CONSULTATION_ID=consult_id, MEDECIN_ID=medic_id, SSN_ID=patient_id, EXAMEN_ID=examen_id, IMAGE_NOM=image_name, IMAGE_PATH=image_path)
+        self.session.add(new_folder)
+        self.session.commit()

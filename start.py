@@ -51,6 +51,11 @@ class Starter(object):
         return str(model.getExamens(medic_id=medicID))
 
     @cherrypy.expose
+    def getConsults(self, patientID):
+        model = ModelClass()
+        return str(model.getConsults(patient_id=patientID))
+
+    @cherrypy.expose
     def getPatients(self, medicID):
         model = ModelClass()
         return str(model.getPatients(medic_id=medicID))
