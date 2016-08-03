@@ -31,6 +31,24 @@ class Starter(object):
         return "Creating user oK : "
 
     @cherrypy.expose
+    def createFolder(self, status, consultID, medicID, patientID, examenID, imgName, imgPWD):
+        model = ModelClass()
+        model.createFolder(status=status,consult_id=consultID,medic_id=medicID,patient_id=patientID,examen_id=examenID,image_name=imgName,image_path=imgPWD)
+        return "Creating folder OK : "
+
+    @cherrypy.expose
+    def createExamen(self, medicID, examenName):
+        model = ModelClass()
+        model.createExamen(medic_id=medicID,examen_name=examenName)
+        return "Creating examen OK : "
+
+    @cherrypy.expose
+    def createConsult(self, patientID, traitement, histo):
+        model = ModelClass()
+        model.createConsultation(patient_id=patientID,tratement=traitement,histo=histo)
+        return "Creating consult OK : "
+
+    @cherrypy.expose
     def auth(self, name, password):
         model = ModelClass()
         return str(model.authMedic(name, password))

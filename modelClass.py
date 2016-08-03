@@ -4,7 +4,6 @@ modelClass - Fait le lien avec la BDD
 Etat_dossier : 1 (envoyé) 2 (en cours) 3 (fini)
 
 '''
-import collections
 import json
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
