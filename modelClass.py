@@ -72,8 +72,8 @@ class ModelClass():
             for exam in self.session.query(Examan).filter_by(EXAMEN_ID=folder.EXAMEN_ID):
                 tempFolder['medic_id'] = exam.PERSONNELSANTE_ID
                 tempFolder['examen_name'] = exam.EXAMEN_NOM
-            tempFolder['image_name'] = exam.IMAGE_NOM
-            tempFolder['image_path'] = exam.IMAGE_PATH
+            tempFolder['image_name'] = folder.IMAGE_NOM
+            tempFolder['image_path'] = folder.IMAGE_PATH
             folderList.append(tempFolder)
         return json.dumps(folderList)
 
