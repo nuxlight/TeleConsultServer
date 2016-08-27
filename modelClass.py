@@ -69,6 +69,10 @@ class ModelClass():
             for consult in self.session.query(Consultation).filter_by(CONSULTATION_ID=folder.CONSULTATION_ID):
                 tempFolder['consult_id'] = consult.CONSULTATION_ID
                 tempFolder['consult_traitement'] = consult.TRAITEMENT
+                for patient in self.session.query(Dmpcpatient).filter_by(SSN_ID=consult.SSN_ID):
+                    tempFolder['patient_name'] = patient.PATIENT_PRENOM
+                    tempFolder['patient_lastname'] = patient.PATIENT_NOM
+                    tempFolder['patient_sexe'] = patient.PATIENT_DMPCSEXE
             for exam in self.session.query(Examan).filter_by(EXAMEN_ID=folder.EXAMEN_ID):
                 tempFolder['medic_id'] = exam.PERSONNELSANTE_ID
                 tempFolder['examen_name'] = exam.EXAMEN_NOM
@@ -124,7 +128,7 @@ class ModelClass():
         self.session.commit()
 
     def createExamen(self, medic_id, examen_name):
-        new_examen = Resultat(PERSONNELSANTE_ID=medic_id,EXAMEN_NOM=examen_name)
+        new_examen = Examan(PERSONNELSANTE_ID=medic_id,EXAMEN_NOM=examen_name)
         self.session.add(new_examen)
         self.session.commit()
 
