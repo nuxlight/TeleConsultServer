@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, ForeignKey, Index, Integer, String, Table
+from sqlalchemy import Column, Date, ForeignKey, Index, Integer, String, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,9 +24,12 @@ class Consultation(Base):
 
     CONSULTATION_ID = Column(Integer, primary_key=True, index=True)
     SSN_ID = Column(ForeignKey('dmpcpatient.SSN_ID', ondelete='CASCADE'), nullable=False, index=True)
+    CONSULTATION_DATE = Column(Date, nullable=False)
     TRAITEMENT = Column(String(500), nullable=False)
     HISTORIQUE = Column(String(500), nullable=False)
+    PERSONNELSANTE_ID = Column(ForeignKey('dmpcpersonnelsante.PERSONNELSANTE_ID'), index=True)
 
+    dmpcpersonnelsante = relationship('Dmpcpersonnelsante')
     dmpcpatient = relationship('Dmpcpatient')
 
 
@@ -90,8 +93,8 @@ class Dmpcpersonnelsante(Base):
     SPECIALITE_ID = Column(ForeignKey('specialite.SPECIALITE_ID'), index=True)
 
     specialite = relationship('Specialite')
-    dmpcstructuresante = relationship('Dmpcstructuresante', secondary='dmpcstructuresante_medecin')
-    dmpcstructuresante1 = relationship('Dmpcstructuresante', secondary='dmpcstructuresante_referent')
+    dmpcstructuresante = relationship('Dmpcstructuresante', secondary='dmpcstructuresante_referent')
+    dmpcstructuresante1 = relationship('Dmpcstructuresante', secondary='dmpcstructuresante_medecin')
 
 
 class Dmpcstructuresante(Base):
@@ -141,6 +144,7 @@ class Resultat(Base):
     EXAMEN_ID = Column(ForeignKey('examen.EXAMEN_ID', ondelete='CASCADE'), nullable=False, index=True)
     IMAGE_NOM = Column(String(100), nullable=False)
     IMAGE_PATH = Column(String(100), nullable=False)
+    HEART_MEASURE = Column(String(250), nullable=False)
 
     consultation = relationship('Consultation')
     examan = relationship('Examan')
@@ -150,4 +154,4 @@ class Specialite(Base):
     __tablename__ = 'specialite'
 
     SPECIALITE_ID = Column(Integer, primary_key=True, index=True)
-    SPECIALITE_NOM = Column(String(20), nullable=False)
+    SPECIALITE_NOM = Column(String(200), nullable=False)

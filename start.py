@@ -51,9 +51,9 @@ class Starter(object):
     # Consultation part
     # -------------------
     @cherrypy.expose
-    def createConsult(self, patientID, traitement, histo):
+    def createConsult(self, patientID, date, traitement, histo):
         model = ModelClass()
-        model.createConsultation(patient_id=patientID,tratement=traitement,histo=histo)
+        model.createConsultation(patient_id=patientID,date=date,tratement=traitement,histo=histo)
         return "Creating consult OK"
 
     @cherrypy.expose
@@ -65,9 +65,9 @@ class Starter(object):
     # Resultat part
     # -------------------
     @cherrypy.expose
-    def createResult(self, consultID, examenID, imageName, imagePath):
+    def createResult(self, consultID, examenID, imageName, imagePath, heartEntry):
         model = ModelClass()
-        model.createResultat(consult_id=consultID,examen_id=examenID,image_nom=imageName,image_path=imagePath)
+        model.createResultat(consult_id=consultID,examen_id=examenID,image_nom=imageName,image_path=imagePath,hearthMeasure=heartEntry)
         return "Creating result OK"
 
     @cherrypy.expose
@@ -96,7 +96,8 @@ class Starter(object):
 
     @cherrypy.expose
     def uploadImage(self, fileImg):
-        out = open('loule.png', 'wb')
+        path = "./images/"+str(fileImg.filename)
+        out = open(path, 'wb')
         size = 0
         while True:
             data = fileImg.file.read(8192)

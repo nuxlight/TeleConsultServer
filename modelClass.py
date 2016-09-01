@@ -87,6 +87,7 @@ class ModelClass():
             tempConsult = {}
             tempConsult['consult_id'] = consult.CONSULTATION_ID
             tempConsult['patient_id'] = consult.SSN_ID
+            tempConsult['date'] = str(consult.CONSULTATION_DATE)
             tempConsult['traitement'] = consult.TRAITEMENT
             tempConsult['historique'] = consult.HISTORIQUE
             consultList.append(tempConsult)
@@ -132,12 +133,12 @@ class ModelClass():
         self.session.add(new_examen)
         self.session.commit()
 
-    def createConsultation(self, patient_id, tratement, histo):
-        new_consult = Consultation(SSN_ID=patient_id,TRAITEMENT=tratement,HISTORIQUE=histo)
+    def createConsultation(self, patient_id, date, tratement, histo):
+        new_consult = Consultation(SSN_ID=patient_id,CONSULTATION_DATE=date,TRAITEMENT=tratement,HISTORIQUE=histo)
         self.session.add(new_consult)
         self.session.commit()
 
-    def createResultat(self, consult_id, examen_id, image_nom, image_path):
-        new_folder = Resultat(CONSULTATION_ID=consult_id,EXAMEN_ID=examen_id,IMAGE_NOM=image_nom,IMAGE_PATH=image_path)
+    def createResultat(self, consult_id, examen_id, image_nom, image_path, hearthMeasure):
+        new_folder = Resultat(CONSULTATION_ID=consult_id,EXAMEN_ID=examen_id,IMAGE_NOM=image_nom,IMAGE_PATH=image_path,HEART_MEASURE=hearthMeasure)
         self.session.add(new_folder)
         self.session.commit()
